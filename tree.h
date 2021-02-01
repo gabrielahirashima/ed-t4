@@ -13,5 +13,7 @@
     /*Ponteiro de string para InfoKey, armazena em uma string a info que define a arvore*/
     typedef char *InfoKey;
 
+    /*Ponteiro para definir o tipo void de Node*/
+    typedef void *Node;
 
 #endif
