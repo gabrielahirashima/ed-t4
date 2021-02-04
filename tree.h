@@ -16,4 +16,24 @@
     /*Ponteiro para definir o tipo void de Node*/
     typedef void *Node;
 
+    /*Ponteiro para definir o Tipo*/
+    typedef void *tipo;
+
+    QuadTree criaQuadTree();
+
+    QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, No *pai, char *quadrante);
+
+    Node getPrevious(Node no);
+
+    Node getNextSudeste(Node no);
+
+    Node getNextSudoeste(Node no);
+
+    Node getNextNordeste(Node no);
+
+    Node getNextNoroeste(Node no);
+
+    tipo getElemento(Node no);
+
+
 #endif

@@ -50,25 +50,64 @@ QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, No *pai, char *quadr
         }
         else{
             if(strcmp(quadrante, "se") == 0){
-                if(inicio->sudeste == NULL){
+                if(pai->sudeste == NULL){
                     node->ant = pai;
-                    node->sudeste = node;
-                }
-                else{
+                    pai->sudeste = node;
+                    node->sudoeste = NULL;
+                    node->sudeste = NULL;
+                    node->nordeste = NULL;
+                    node->noroeste = NULL;
 
+                    int nivel_atual = pai->nivel + 1; 
+                    if(quadtree->niveis < nivel_atual){
+                        quadtree->niveis = nivel_atual;
+                    }
                 }
             }
             else if(strcmp(quadrante, "so") == 0){
-                node->ant = pai;
-                node->sudoeste = node;
+                if(pai->sudoeste == NULL){
+                    node->ant = pai;
+                    pai->sudoeste = node;
+                    node->sudoeste = NULL;
+                    node->sudeste = NULL;
+                    node->nordeste = NULL;
+                    node->noroeste = NULL;
+
+                    int nivel_atual = pai->nivel + 1; 
+                    if(quadtree->niveis < nivel_atual){
+                        quadtree->niveis = nivel_atual;
+                    }
+                }
             }
             else if(strcmp(quadrante, "ne") == 0){
-                node->ant = pai;
-                node->nordeste = node;
+                if(pai->nordeste == NULL){
+                    node->ant = pai;
+                    pai->nordeste = node;
+                    node->sudoeste = NULL;
+                    node->sudeste = NULL;
+                    node->nordeste = NULL;
+                    node->noroeste = NULL;
+
+                    int nivel_atual = pai->nivel + 1; 
+                    if(quadtree->niveis < nivel_atual){
+                        quadtree->niveis = nivel_atual;
+                    }
+                }
             }
             else if(strcmp(quadrante, "no") == 0){
-                node->ant = pai;
-                node->noroeste = node;
+                if(pai->noroeste == NULL){
+                    node->ant = pai;
+                    pai->noroeste = node;
+                    node->sudoeste = NULL;
+                    node->sudeste = NULL;
+                    node->nordeste = NULL;
+                    node->noroeste = NULL;
+
+                    int nivel_atual = pai->nivel + 1; 
+                    if(quadtree->niveis < nivel_atual){
+                        quadtree->niveis = nivel_atual;
+                    }
+                }
             }
         }
 
@@ -103,5 +142,12 @@ Node getNextNoroeste(Node no){
     No *node = (No*)no;
 
     return node->noroeste;
+}
+
+
+tipo getElemento(Node no){
+    No *node = (No*)no;
+
+    return node->elemento;
 }
 
