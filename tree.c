@@ -3,9 +3,15 @@
 #include <stdlib.h>
 #include "tree.h"
 
+typedef struct ponto{
+    double x;
+    double y;
+}Ponto;
+
 typedef struct no{
     QuadTreeInfo elemento;
     int nivel;
+    struct ponto p;
     struct no *sudeste; /*se*/
     struct no *sudoeste; /*so*/
     struct no *nordeste; /*ne*/
@@ -15,6 +21,7 @@ typedef struct no{
 
 typedef struct arvore{
     No *raiz;
+    No *raizAtual;
     int niveis;
 }Arvore;
 
@@ -26,8 +33,39 @@ QuadTree criaQuadTree(){
     return qt;
 }
 
-QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, No *pai, char *quadrante){
+QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, Ponto p){
+    Arvore *arvoreQt = (Arvore*)qt; 
+    char *quadrante = getQuadrante(p, arvoreQt->raizAtual->p); 
 
+    No* node = (No*)malloc(sizeof(No));
+    node->elemento = elemento;
+
+        if(arvoreQt->raiz == NULL){
+            arvoreQt->raiz = node;
+            node->p = p;
+        }
+        else{
+            No* qtAux = arvoreQt->raizAtual; 
+        }
+}
+
+char *getQuadrante(Ponto pAtual, Ponto pRaiz){
+    if(pRaiz.x > pAtual.x){
+        if(pRaiz.y > pAtual.y){
+            return "SE"; /*Sudeste*/
+        }
+        else{
+            return "NE"; /*Nordeste*/
+        }
+    }
+    else if(pRaiz.x < pAtual.x){
+        if(pRaiz.y < pAtual.y){
+            return "NO"; /*Noroeste*/
+        }
+        else{
+            return "SO"; /*Sudoeste*/
+        }
+    }
 }
 
 Node getPrevious(Node no){
