@@ -66,6 +66,11 @@ QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py
             }
             if(qtAux == NULL){
                  No* node = criaNo();
+                   arvoreQt->raizAtual = node;
+                    node->p.x = px;
+                    node->p.y = py;
+                    node->ant = qtAux;
+                    setFilho(qtAux, node, quadrante);
             }
 
         }
@@ -115,40 +120,39 @@ Node getFilho(Node no, char* quadrante){
     }
 }
 
-Node getPrevious(Node no){
-    No* node = (No*)no;
+void setFilho(Node pai, Node filho, char *quadrante){
+    No* nodePai = (No*)pai;
+    No* nodeFilho = (No*)filho;
 
-    return node->ant;
+    if(strcmp("SE", quadrante) == 0){
+         nodePai->sudeste = nodeFilho;
+    }
+    else if(strcmp("SO", quadrante) == 0){
+         nodePai->sudoeste = nodeFilho;
+    }
+    else if(strcmp("NE", quadrante) == 0){
+         nodePai->nordeste = nodeFilho;
+    }
+    else if(strcmp("NO", quadrante) == 0){
+         nodePai->noroeste = nodeFilho;
+    } 
 }
 
-Node getNextSudeste(Node no){
-    No *node = (No*)no;
+Node getNoQt(Node raiz, double x, double y){
+    No* node = (No*)raiz;
 
-    return node->sudeste;
+    if(node == NULL){
+        return NULL;
+    }
+    else{ 
+        if(node->p.x == x && node->p.y == y){
+            return node;
+        }
+        else{
+            char *quadrante = getQuadrante(x, y, node->p.x, node->p.y);
+            No* filho;
+
+
+        }
+    }
 }
-
-Node getNextSudoeste(Node no){
-    No *node = (No*)no;
-
-    return node->sudoeste;
-}
-
-Node getNextNordeste(Node no){
-    No *node = (No*)no;
-
-    return node->nordeste;
-}
-
-Node getNextNoroeste(Node no){
-    No *node = (No*)no;
-
-    return node->noroeste;
-}
-
-
-tipo getElemento(Node no){
-    No *node = (No*)no;
-
-    return node->elemento;
-}
-
