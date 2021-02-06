@@ -33,38 +33,82 @@ QuadTree criaQuadTree(){
     return qt;
 }
 
-QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, Ponto p){
-    Arvore *arvoreQt = (Arvore*)qt; 
-    char *quadrante = getQuadrante(p, arvoreQt->raizAtual->p); 
-
+No* criaNo(){
     No* node = (No*)malloc(sizeof(No));
-    node->elemento = elemento;
+    node->sudeste = NULL;
+    node->sudoeste = NULL;
+    node->nordeste = NULL;
+    node->noroeste = NULL;
+
+    return node;
+}
+
+QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py){
+    Arvore *arvoreQt = (Arvore*)qt; 
+    No* pai;
+    char *quadrante;
 
         if(arvoreQt->raiz == NULL){
+            No* node = criaNo();
+            node->elemento = elemento;
             arvoreQt->raiz = node;
-            node->p = p;
+            arvoreQt->raizAtual = node;
+            node->p.x = px;
+            node->p.y = py;
+            node->ant = NULL;
         }
         else{
-            No* qtAux = arvoreQt->raizAtual; 
+            No* qtAux = arvoreQt->raizAtual;
+            while (qtAux != NULL && (comparaPonto(px, py, qtAux->p.x, qtAux->p.y) == 0)){
+                pai = qtAux;
+                quadrante = getQuadrante(px, py, qtAux->p.x, qtAux->p.y);
+
+            }
+
         }
 }
 
-char *getQuadrante(Ponto pAtual, Ponto pRaiz){
-    if(pRaiz.x > pAtual.x){
-        if(pRaiz.y > pAtual.y){
+char *getQuadrante(double pAtualX, double pAtualY, double pRaizX, double pRaizY){
+    if(pRaizX > pAtualX){
+        if(pRaizY > pAtualY){
             return "SE"; /*Sudeste*/
         }
         else{
             return "NE"; /*Nordeste*/
         }
     }
-    else if(pRaiz.x < pAtual.x){
-        if(pRaiz.y < pAtual.y){
+    else if(pRaizX < pAtualX){
+        if(pRaizY < pAtualY){
             return "NO"; /*Noroeste*/
         }
         else{
             return "SO"; /*Sudoeste*/
         }
+    }
+}
+
+int comparaPonto(double pAtualX, double pAtualY, double pRaizX, double pRaizY){
+    if(pRaizX == pAtualX  && pRaizY == pAtualY){
+        return 1;
+    }
+    else
+        return 0;
+}
+
+Node getFilho(Node no, char* quadrante){
+    No* node = (No*)no;
+
+    if(strcmp("SE", quadrante) == 0){
+
+    }
+    else if(strcmp("SW", quadrante) == 0){
+
+    }
+    else if(strcmp("NE", quadrante) == 0){
+
+    }
+    else if(strcmp("NW", quadrante) == 0){
+
     }
 }
 
