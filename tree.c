@@ -152,7 +152,9 @@ Node getNoQt(Node raiz, double x, double y){
             char *quadrante = getQuadrante(x, y, node->p.x, node->p.y);
             No* filho;
 
+            filho = getFilho(node, quadrante);
 
+            return getNoQt(filho, x, y);
         }
     }
 }
