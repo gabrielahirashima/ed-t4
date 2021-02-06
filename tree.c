@@ -62,7 +62,10 @@ QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py
             while (qtAux != NULL && (comparaPonto(px, py, qtAux->p.x, qtAux->p.y) == 0)){
                 pai = qtAux;
                 quadrante = getQuadrante(px, py, qtAux->p.x, qtAux->p.y);
-
+            	qtAux = getFilho(qtAux, quadrante);
+            }
+            if(qtAux == NULL){
+                 No* node = criaNo();
             }
 
         }
@@ -99,16 +102,16 @@ Node getFilho(Node no, char* quadrante){
     No* node = (No*)no;
 
     if(strcmp("SE", quadrante) == 0){
-
+        return node->sudeste;
     }
-    else if(strcmp("SW", quadrante) == 0){
-
+    else if(strcmp("SO", quadrante) == 0){
+        return node->sudoeste;
     }
     else if(strcmp("NE", quadrante) == 0){
-
+        return node->nordeste;
     }
-    else if(strcmp("NW", quadrante) == 0){
-
+    else if(strcmp("NO", quadrante) == 0){
+        return node->noroeste;
     }
 }
 
