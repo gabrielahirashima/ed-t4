@@ -8,33 +8,32 @@ typedef struct ponto{
     double y;
 }Ponto;
 
-typedef struct no{
+typedef struct node{
     QuadTreeInfo elemento;
-    int nivel;
     struct ponto p;
     struct no *sudeste; /*se*/
     struct no *sudoeste; /*so*/
     struct no *nordeste; /*ne*/
     struct no *noroeste; /*no*/
     struct no *ant; 
-}No;
+}NoStruct;
 
 typedef struct arvore{
-    No *raiz;
-    No *raizAtual;
+    NoStruct *raiz;
+    NoStruct *raizAtual;
     int niveis;
-}Arvore;
+}ArvoreStruct;
 
-QuadTree criaQuadTree(){
-    Arvore *qt = (Arvore*)malloc(sizeof(Arvore));
+QuadTreeQT criaQuadTree(){
+    ArvoreStruct *qt = (ArvoreStruct*)malloc(sizeof(ArvoreStruct));
     qt->raiz = NULL;
     qt->niveis = 0;
 
     return qt;
 }
 
-No* criaNo(){
-    No* node = (No*)malloc(sizeof(No));
+QuadTreeNo criaNo(){
+    NoStruct* node = (NoStruct*)malloc(sizeof(NoStruct));
     node->sudeste = NULL;
     node->sudoeste = NULL;
     node->nordeste = NULL;
@@ -43,13 +42,13 @@ No* criaNo(){
     return node;
 }
 
-QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py){
-    Arvore *arvoreQt = (Arvore*)qt; 
-    No* pai;
+QuadTreeQT insereElemento(QuadTreeQT qt, QuadTreeInfo elemento, double px, double py){
+    ArvoreStruct *arvoreQt = (ArvoreStruct*)qt; 
+    NoStruct* pai;
     char *quadrante;
 
         if(arvoreQt->raiz == NULL){
-            No* node = criaNo();
+            NoStruct* node = criaNo();
             node->elemento = elemento;
             arvoreQt->raiz = node;
             arvoreQt->raizAtual = node;
@@ -58,14 +57,14 @@ QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py
             node->ant = NULL;
         }
         else{
-            No* qtAux = arvoreQt->raizAtual;
+            NoStruct* qtAux = arvoreQt->raizAtual;
             while (qtAux != NULL && (comparaPonto(px, py, qtAux->p.x, qtAux->p.y) == 0)){
                 pai = qtAux;
                 quadrante = getQuadrante(px, py, qtAux->p.x, qtAux->p.y);
             	qtAux = getFilho(qtAux, quadrante);
             }
             if(qtAux == NULL){
-                 No* node = criaNo();
+                 NoStruct* node = criaNo();
                    arvoreQt->raizAtual = node;
                     node->p.x = px;
                     node->p.y = py;
@@ -74,6 +73,41 @@ QuadTree insereElemento(QuadTree qt, QuadTreeInfo elemento, double px, double py
             }
 
         }
+    return arvoreQt;
+}
+
+QuadTreeQT removeElemento(){
+
+}
+
+void liberaNoQuadTree(QuadTreeNo no){
+    NoStruct* node = (NoStruct*)no;
+
+    if(node == NULL){
+        return;
+    }
+
+    if(node->nordeste != NULL){
+        freeNoQuadtree(node->nordeste);
+    }
+    else if(node->noroeste != NULL){
+        freeNoQuadtree(node->noroeste);
+    }
+    else if(node->sudeste != NULL){
+        freeNoQuadtree(node->sudeste);
+    }
+    else if(node->sudoeste != NULL){
+        freeNoQuadtree(node->sudoeste);
+    }
+
+    free(node->elemento);
+    free(node);  
+}
+
+void liberaQuadTree(QuadTreeQT qt){
+    ArvoreStruct *arvoreQt = (ArvoreStruct*)qt; 
+    freeNoQuadTree(arvoreQt);
+    free(arvoreQt);
 }
 
 char *getQuadrante(double pAtualX, double pAtualY, double pRaizX, double pRaizY){
@@ -103,8 +137,8 @@ int comparaPonto(double pAtualX, double pAtualY, double pRaizX, double pRaizY){
         return 0;
 }
 
-Node getFilho(Node no, char* quadrante){
-    No* node = (No*)no;
+QuadTreeNo getFilho(QuadTreeNo no, char* quadrante){
+    NoStruct* node = (NoStruct*)no;
 
     if(strcmp("SE", quadrante) == 0){
         return node->sudeste;
@@ -120,9 +154,9 @@ Node getFilho(Node no, char* quadrante){
     }
 }
 
-void setFilho(Node pai, Node filho, char *quadrante){
-    No* nodePai = (No*)pai;
-    No* nodeFilho = (No*)filho;
+void setFilho(QuadTreeNo pai, QuadTreeNo filho, char *quadrante){
+    NoStruct* nodePai = (NoStruct*)pai;
+    NoStruct* nodeFilho = (NoStruct*)filho;
 
     if(strcmp("SE", quadrante) == 0){
          nodePai->sudeste = nodeFilho;
@@ -138,8 +172,8 @@ void setFilho(Node pai, Node filho, char *quadrante){
     } 
 }
 
-Node getNoQt(Node raiz, double x, double y){
-    No* node = (No*)raiz;
+QuadTreeNo getNoQt(QuadTreeNo raiz, double x, double y){
+    NoStruct* node = (NoStruct*)raiz;
 
     if(node == NULL){
         return NULL;
@@ -150,11 +184,29 @@ Node getNoQt(Node raiz, double x, double y){
         }
         else{
             char *quadrante = getQuadrante(x, y, node->p.x, node->p.y);
-            No* filho;
+            NoStruct* filho;
 
             filho = getFilho(node, quadrante);
 
             return getNoQt(filho, x, y);
         }
     }
+}
+
+double getNoPx(QuadTreeNo no){
+    NoStruct* node = (NoStruct*)no;
+
+    return node->p.x;
+}
+
+double getNoPy(QuadTreeNo no){
+    NoStruct* node = (NoStruct*)no;
+
+    return node->p.y;
+}
+
+QuadTreeInfo getQuadTreeElemento(QuadTreeNo no){
+     NoStruct* node = (NoStruct*)no;
+
+     return node->elemento;
 }
