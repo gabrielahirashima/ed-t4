@@ -197,19 +197,37 @@ int tamanhoLista(listaStruct lista){
     return tamanho;
 }
 
-void quicksort(listaStruct lista, int pontoInicial, int tamanho){
-    int i = pontoInicial;
+void quicksort(listaStruct lista, int tamanho){
+    int i = 0;
     int j = tamanho - 1;
     tipo *elemento1, *elemento2;
 
     No *aux1, *aux2, *aux3, *pivo;
 
     pivo = getFirst(lista);
-    elemento1 = getElemento(pivo);
+    for(int i = 0; i < tamanho/2 ; i++){
+        pivo = getNext(lista);
+    }
+    elemento1 = getElemento(pivo);  
+        aux1 = getFirst(lista);
+        elemento2 = getElemento(aux1);
 
-    for(int k = 0; k < tamanho; k++){
+    for(int j = 1; j <= tamanho; j++){
+        if(){
+            
+        }
         aux1 = getNext(pivo);
         elemento2 = getElemento(aux1);
-        
     }
+}
+
+void swap(Node no1, Node no2){
+    No *node1 = (No*)no1;
+    No *node2 = (No*)no2;
+    No *aux;
+
+    aux->elemento = node1->elemento;
+    node1->elemento = node2->elemento;
+    node2->elemento = aux->elemento;
+
 }

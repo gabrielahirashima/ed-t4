@@ -3,6 +3,7 @@
 
 #include "lista.h"
 
+
 /*define listaCidade como ponteiro void*/
 typedef void *listaCidade;
 

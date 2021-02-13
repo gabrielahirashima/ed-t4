@@ -10,6 +10,7 @@
 typedef struct pEnvoltoria{
     double x;
     double y;
+    int nivelEnvoltoria;
 }pontoEnvoltoria;
 
 listaEnvoltoria criaPontoEnvoltoria(double x, double y){
@@ -19,18 +20,6 @@ listaEnvoltoria criaPontoEnvoltoria(double x, double y){
     p->y = y;
 
     return p;
-}
-
-void swapPontoEnvoltoria(pontoEnvoltoria* a, pontoEnvoltoria* b){
-    pontoEnvoltoria temp;
-
-    temp.x = a->x;
-    temp.y = a->y;
-    a->x = b->x;
-    a->y = b->y;
-    b->x = temp.x;
-    b->y = temp.y;
-
 }
 
 double distanciaPontosEnvoltoria(double ax, double bx, double ay, double by){
@@ -90,5 +79,58 @@ int comparaPontosEnvoltoria(Node *a, Node *b, Node *c){
     else{
         return 1;
     }
+
+}
+
+double getXEnvoltoria(listaEnvoltoria lista){
+    pontoEnvoltoria *p = (pontoEnvoltoria*)lista;
+    return p->x;
+}
+
+double getYEnvoltoria(listaEnvoltoria lista){
+    pontoEnvoltoria *p = (pontoEnvoltoria*)lista;
+    return p->y;
+}
+
+int getNivelEnvoltoria(listaEnvoltoria lista){
+    pontoEnvoltoria *p = (pontoEnvoltoria*)lista;
+    return p->nivelEnvoltoria;
+}
+
+void calculaEnvoltoria(listaEnvoltoria listaE){
+    listaStruct listaPontos = getListaTempPontos(listaE);
+    listaStruct listaEnvoltoria = getListaTempEnvoltoria(listaE);
+    Node noListaP = getFirst(listaPontos);
+    Node noListaE = getFirst(listaEnvoltoria);
+    Node a, b, c, maiorY = getFirst(listaPontos);
+    tipo elemento1, elemento2;
+    int nPontos = 0, nivel = 0; 
+
+    while(noListaP != NULL){
+        nPontos = nPontos + 1;
+        noListaP = getNext(listaPontos);
+    }
+
+    if(nPontos < 3 ){
+        return NULL;
+    }
+
+    noListaP = getFirst(listaPontos);
+    elemento1 = getElemento(noListaP);
+
+    while(noListaP != NULL){
+        if(getYEnvoltoria(noListaP) == getYEnvoltoria(maiorY)){
+            if(getXEnvoltoria(noListaP) > getXEnvoltoria(maiorY)){
+                maiorY = noListaP;
+            }
+        }
+        else if(getYEnvoltoria(noListaP) > getYEnvoltoria(maiorY)){
+            maiorY = noListaP;
+        }
+        noListaP = getNext(noListaP);
+    }
+
+    swap(getFirst(listaPontos), maiorY);
+
 
 }
