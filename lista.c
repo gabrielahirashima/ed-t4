@@ -4,6 +4,7 @@
 #include "lista.h"
 #include "listaFormas.h"
 #include "listaObjUrbanos.h"
+#include "listaEnvoltoria.h"
 #include "listaQuadras.h"
 
 typedef struct no{
@@ -197,28 +198,71 @@ int tamanhoLista(listaStruct lista){
     return tamanho;
 }
 
-void quicksort(listaStruct lista, int tamanho){
-    int i = 0;
+void quicksort(listaStruct lista, int tamanho, int inicio){
+    int i = inicio;
     int j = tamanho - 1;
-    tipo *elemento1, *elemento2;
+    tipo *elementoPivo, *elemento1, *elemento2;
 
     No *aux1, *aux2, *aux3, *pivo;
 
     pivo = getFirst(lista);
-    for(int i = 0; i < tamanho/2 ; i++){
+    for(int k = 0; k < (i + tamanho)/2 ; k++){
         pivo = getNext(lista);
     }
-    elemento1 = getElemento(pivo);  
-        aux1 = getFirst(lista);
-        elemento2 = getElemento(aux1);
+        elementoPivo = getElemento(pivo);
 
-    for(int j = 1; j <= tamanho; j++){
-        if(){
-            
+    while(i <= j) { 
+        aux1 = getFirst(lista);
+        for(int k = 0; k < i; k++){
+            aux1 = getNext(aux1);
         }
-        aux1 = getNext(pivo);
-        elemento2 = getElemento(aux1);
+        elemento1 = getElemento(aux1);
+
+        while(comparaPontosEnvoltoria((getFirst(lista)), pivo, aux1) > 0 && i < tamanho){
+            aux1 = getNext(aux1);
+            elemento1 = getElemento(aux1);
+            i++;
+        }
+
+        aux1 = getFirst(lista);
+           for (int k = 0; k < j; k++){
+            aux1 = getNext(aux1);
+        }
+        elemento1 = getInfo(aux1);
+
+        while(compare((getFirst(lista)), pivo, aux1) > 0 && j > inicio){
+                aux1 = getPrevious(aux1);
+                elemento1 = getElemento(aux1);
+
+                j--;
+        }
+        
+        if (i <= j){
+            aux2 = getFirst(lista);
+            for (int k = 0; k < j; k++){
+                aux2 = getNext(aux2);
+            }
+
+            aux1 = getFirst(lista);
+
+            for (int k = 0; k < i; k++){
+                aux1 = getNext(aux1);
+            }
+
+            aux3->elemento = aux1->elemento;
+            aux1->elemento = aux2->elemento;
+            aux2->elemento = aux3->elemento;
+            j--;
+            i++;
+        }
+        
     }
+    if (inicio < j){
+        quickSort(lista, inicio, j+1);
+    }if (tamanho > i){
+        quickSort(lista, i, tamanho);
+    }
+
 }
 
 void swap(Node no1, Node no2){

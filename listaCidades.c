@@ -24,6 +24,7 @@ typedef struct cidadetemp{
 typedef struct cidadeenvoltoria{
     listaStruct listaEnvoltoria;
     listaStruct listaPontos;
+    listaStruct listaPontosOrganizada;
 }CidadeEnvoltoria;
 
 typedef struct cidade{
@@ -72,6 +73,7 @@ listaStruct criaListaEnvoltoria(){
 
     cid->listaEnvoltoria = criaLista();
     cid->listaPontos = criaLista();
+    cid->listaPontosOrganizada = criaLista();
 }
 
 listaStruct getQuadtreeFormas(listaCidade lista){
@@ -117,6 +119,11 @@ listaStruct getListaTempEnvoltoria(listaCidade lista){
 listaStruct getListaTempPontos(listaCidade lista){
     CidadeEnvoltoria* list = (CidadeEnvoltoria*)lista;
     return list->listaPontos;
+}
+
+listaStruct getListaTempPontosOrganizada(listaCidade lista){
+    CidadeEnvoltoria* list = (CidadeEnvoltoria*)lista;
+    return list->listaPontosOrganizada;
 }
 
 listaStruct getListaTempFormas(listaCidade lista){

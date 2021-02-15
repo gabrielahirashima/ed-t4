@@ -97,8 +97,14 @@ int getNivelEnvoltoria(listaEnvoltoria lista){
     return p->nivelEnvoltoria;
 }
 
+void setNivelEnvoltoria(listaEnvoltoria lista, int nivel){
+    pontoEnvoltoria *p = (pontoEnvoltoria*)lista;
+    p->nivelEnvoltoria = nivel;
+}
+
 void calculaEnvoltoria(listaEnvoltoria listaE){
     listaStruct listaPontos = getListaTempPontos(listaE);
+    listaStruct listaPontosOrganizada = getListaTempPontosOrganizada(listaE);
     listaStruct listaEnvoltoria = getListaTempEnvoltoria(listaE);
     Node noListaP = getFirst(listaPontos);
     Node noListaE = getFirst(listaEnvoltoria);
@@ -131,6 +137,34 @@ void calculaEnvoltoria(listaEnvoltoria listaE){
     }
 
     swap(getFirst(listaPontos), maiorY);
+    quicksort(listaPontos, 0, tamanhoLista(listaPontos));
+
+    for (int i = 0; i < 3; i++){
+        a = getFirst(listaPontos);
+        for (int k = 0; k < i; k++){
+            a = getNext(a);
+        }      
+
+       elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a));
+       insertElemento(listaPontosOrganizada, elemento1);
+    }
 
 
+    for (int i = 3; i < tamanhoLista(listaPontos); i++){
+        a = getFirst(listaPontos);
+        for (int k = 0; k < i; k++){
+            a = getNext(a);
+        }  
+        b = getLast(listaPontosOrganizada);
+        c = getPrevious(b);
+
+        while (orient(getElemento(c),getElemento(b), getElemento(a)) != 2){
+            removeElemento(listaPontosOrganizada, getInfo(getLast(listaPontosOrganizada)));
+            b = getLast(listaPontosOrganizada);
+            c = getPrevious(b);
+        }
+
+        elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a));
+        insertElemento(listaPontosOrganizada, elemento1);
+    }
 }

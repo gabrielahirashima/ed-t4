@@ -208,6 +208,7 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
     liberaLista(getListaCasosCovid(listaTemp));
     liberaLista(getListaEnvoltoria(listaTemp));
     free(listaTemp);
+    
     fclose(arq);
     svgen(listacidade, saidaSvg);
 }

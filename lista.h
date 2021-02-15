@@ -49,7 +49,7 @@ int tamanhoLista(listaStruct lista);
 /*imprime lista*/
 void imprimeLista(listaStruct l, char c);
 
-void quicksort(listaStruct lista, int pontoInicial, int tamanho);
+void quicksort(listaStruct lista, int tamanho, int inicio);
 
 void swap(Node no1, Node no2);
 

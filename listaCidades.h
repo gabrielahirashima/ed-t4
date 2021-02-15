@@ -43,6 +43,9 @@ listaStruct getListaTempEnvoltoria(listaCidade lista);
 /*Retorna a lista temporaria de pontos*/
 listaStruct getListaTempPontos(listaCidade lista);
 
+/*Retorna a lista temporaria de pontos apos o calculo da envoltoria e com seus respectivos niveis*/
+listaStruct getListaTempPontosOrganizada(listaCidade lista);
+
 /*Retorna a lista de Formas*/
 listaStruct getListaTempFormas(listaCidade lista);
 
