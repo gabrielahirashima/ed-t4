@@ -13,11 +13,12 @@ typedef struct pEnvoltoria{
     int nivelEnvoltoria;
 }pontoEnvoltoria;
 
-listaEnvoltoria criaPontoEnvoltoria(double x, double y){
+listaEnvoltoria criaPontoEnvoltoria(double x, double y, int nivel){
     pontoEnvoltoria* p = (pontoEnvoltoria*)malloc(sizeof(pontoEnvoltoria));
 
     p->x = x;
     p->y = y;
+    p->nivelEnvoltoria = nivel;
 
     return p;
 }
@@ -102,15 +103,16 @@ void setNivelEnvoltoria(listaEnvoltoria lista, int nivel){
     p->nivelEnvoltoria = nivel;
 }
 
-void calculaEnvoltoria(listaEnvoltoria listaE){
+void calculaEnvoltoria(listaEnvoltoria listaE, int nivel){
     listaStruct listaPontos = getListaTempPontos(listaE);
     listaStruct listaPontosOrganizada = getListaTempPontosOrganizada(listaE);
     listaStruct listaEnvoltoria = getListaTempEnvoltoria(listaE);
     Node noListaP = getFirst(listaPontos);
     Node noListaE = getFirst(listaEnvoltoria);
+    Node aux;
     Node a, b, c, maiorY = getFirst(listaPontos);
     tipo elemento1, elemento2;
-    int nPontos = 0, nivel = 0; 
+    int nPontos = 0; 
 
     while(noListaP != NULL){
         nPontos = nPontos + 1;
@@ -139,13 +141,13 @@ void calculaEnvoltoria(listaEnvoltoria listaE){
     swap(getFirst(listaPontos), maiorY);
     quicksort(listaPontos, 0, tamanhoLista(listaPontos));
 
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++){/*Insere os pontos na lista de Envoltoria organizad*/
         a = getFirst(listaPontos);
         for (int k = 0; k < i; k++){
             a = getNext(a);
         }      
 
-       elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a));
+       elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a), nivel);
        insertElemento(listaPontosOrganizada, elemento1);
     }
 
@@ -164,7 +166,29 @@ void calculaEnvoltoria(listaEnvoltoria listaE){
             c = getPrevious(b);
         }
 
-        elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a));
+        elemento1 = criaPontoEnvoltoria(getXEnvoltoria(a), getYEnvoltoria(a), nivel);
         insertElemento(listaPontosOrganizada, elemento1);
     }
+
+    a = getFirst(listaPontos);
+    b = getFirst(listaPontosOrganizada);
+
+    while( b != NULL){
+        if (getXEnvoltoria(a) == getXEnvoltoria(b) && getYEnvoltoria(a) == getYEnvoltoria(b)){
+            aux = getNext(a);
+            removeElemento(listaPontos, getElemento(a));
+            a = aux;
+            b = getNext(b);
+        }
+        else{
+            a = getNext(a);
+        }
+    }
+
+    nivel = nivel + 1;
+
+    while(calculaEnvoltoria != NULL){
+        calculaEnvoltoria(listaE, nivel);
+    }
+    
 }

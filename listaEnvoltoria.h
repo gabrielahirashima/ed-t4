@@ -5,7 +5,7 @@
 typedef void *listaEnvoltoria;
 
 
-listaEnvoltoria criaPontoEnvoltoria(double x, double y);
+listaEnvoltoria criaPontoEnvoltoria(double x, double y, int nivel);
 
 double distanciaPontosEnvoltoria(double ax, double bx, double ay, double by);
 
@@ -18,5 +18,9 @@ double getXEnvoltoria(listaEnvoltoria lista);
 double getYEnvoltoria(listaEnvoltoria lista);
 
 int getNivelEnvoltoria(listaEnvoltoria lista);
+
+void setNivelEnvoltoria(listaEnvoltoria lista, int nivel);
+
+void calculaEnvoltoria(listaEnvoltoria listaE, int nivel);
 
 #endif

@@ -180,6 +180,9 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
                     fscanf(arq, "%s %s", cw, rw);
                 }
             }
+
+    calculaEnvoltoria(listaEnvoltoriaFormas, 0);
+
     liberaLista(getListaTempEnvoltoria(listaEnvoltoriaFormas));
     liberaLista(getListaTempPontos(listaEnvoltoriaFormas));
     free(listaEnvoltoriaFormas);
