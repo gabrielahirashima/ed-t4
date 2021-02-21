@@ -9,6 +9,7 @@ int main(int argc, char *argv[]){
     char *arquivoQry = NULL;
     char *pastaSaida = NULL;
 
+
     for (int i = 0; i<argc; i++){ /* Função para captar os caracteres do terminal */
             if ( strcmp(argv[i], "-e") == 0){
                     i++;

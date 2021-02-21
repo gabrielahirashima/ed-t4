@@ -22,11 +22,17 @@ listaStruct insertBefore(listaStruct lista, tipo elemento, tipo elemento_2);
 /*Insere elemento após elemento_2 na lista encadeada*/
 listaStruct insertAfter(listaStruct lista, tipo elemento, tipo elemento_2);
 
-/*remove elemento da lista encadeada*/
+/*apenas remove o node e nao o elemento*/
+void removeNode(listaStruct l, Node elemento);
+
+/*remove o node e o elemento da lista encadeada*/
 void removeElemento(listaStruct lista, Node elemento);
 
-/*libera lista encadeada*/
+/*libera lista encadeada removendo os elementos*/
 void liberaLista(listaStruct lista);
+
+/*libera lista encadeada sem remover os elementos*/
+void liberaListaNaoTotal(listaStruct lista);
 
 /*retorna o primeiro elemento da lista*/
 Node getFirst(listaStruct lista);
@@ -49,8 +55,15 @@ int tamanhoLista(listaStruct lista);
 /*imprime lista*/
 void imprimeLista(listaStruct l, char c);
 
-void quicksort(listaStruct lista, int tamanho, int inicio);
+double getXLista(Node no);
 
-void swap(Node no1, Node no2);
+double getYLista(Node no);
 
+void quicksort(listaStruct lista, Node first, Node last);
+
+Node partition(listaStruct lista, Node first, Node last);
+
+void swap(listaStruct lista, int pos);
+
+void swapElemento(Node *node1, Node *node2);
 #endif

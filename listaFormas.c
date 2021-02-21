@@ -3,6 +3,7 @@
 #include <string.h>
 #include "lista.h"
 #include "listaFormas.h"
+#include "listaPontos.h"
 
 /* CHAR DE IDENTIFICAÇÃO
     c = circulo;

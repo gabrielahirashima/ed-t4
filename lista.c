@@ -4,10 +4,17 @@
 #include "lista.h"
 #include "listaFormas.h"
 #include "listaObjUrbanos.h"
-#include "listaEnvoltoria.h"
 #include "listaQuadras.h"
+#include "quadtree.h"
+#include "listaPontos.h"
+
+typedef struct ponto{
+    double x;
+    double y;
+}Ponto;
 
 typedef struct no{
+    struct ponto p;
     void *elemento;
     struct no *ant;
     struct no *prox;
@@ -27,9 +34,10 @@ listaStruct criaLista(){
 
 listaStruct insertElemento(listaStruct lista, tipo elemento){
     Lista *list = (Lista*)lista;
-    
+
     No* node = (No*)malloc(sizeof(No));
     node->elemento = elemento;
+
         if(list->primeiro == NULL){ /*se a lista esta vazia*/
             node->ant = NULL; /*o anterior aponta para null*/
             list->primeiro = node; /*o primeiro elemento da lista é node*/
@@ -113,29 +121,61 @@ listaStruct insertAfter(listaStruct lista, tipo elemento, tipo elemento_2){
     return NULL;
 }
 
-void removeElemento(listaStruct l, Node elemento){
+void removeNode(listaStruct l, Node elemento){
    Lista* lista = (Lista*) l;
-    No *aux, *aux2;
+    No *aux = (No*)elemento;
+    No *aux2;
     aux = lista->primeiro;
     
-    while (aux!=NULL){
+    while (aux != NULL){
         if(aux->elemento == elemento){
-            if (aux == lista->primeiro){
+            if (aux==lista->primeiro){
                 lista->primeiro = aux->prox;
                 lista->primeiro->ant = NULL;
             }
-            if(aux == lista->ultimo){
+            if(aux==lista->ultimo){
                 lista->ultimo = aux->ant;
                 lista->ultimo->prox = NULL;
             }
-
-            aux2 = aux->prox;
-            aux2->ant = aux->ant;
-
-            if(aux->ant!=NULL){
-                aux->ant->prox = aux2;
+            else{
+                aux2 = aux->prox;
+                aux2->ant = aux->ant;
+                aux2->prox->ant = aux2; 
+                if(aux->ant!=NULL){
+                    aux->ant->prox = aux2;
+                }     
             }
-            
+            free(aux);
+            break;
+         }
+        aux = aux->prox;
+    }
+}
+
+void removeElemento(listaStruct l, Node elemento){
+   Lista* lista = (Lista*) l;
+    No *aux = (No*)elemento;
+    No *aux2;
+    aux = lista->primeiro;
+    
+    while (aux != NULL){
+        if(aux->elemento == elemento){
+            if (aux==lista->primeiro){
+                lista->primeiro = aux->prox;
+                lista->primeiro->ant = NULL;
+            }
+            if(aux==lista->ultimo){
+                lista->ultimo = aux->ant;
+                lista->ultimo->prox = NULL;
+            }
+            else{
+                aux2 = aux->prox;
+                aux2->ant = aux->ant;
+                aux2->prox->ant = aux2; 
+                if(aux->ant!=NULL){
+                    aux->ant->prox = aux2;
+                }     
+            }
             free(aux->elemento);
             free(aux);
             break;
@@ -157,15 +197,34 @@ void liberaLista(listaStruct lista){
     free(lista);
 }
 
+void liberaListaNaoTotal(listaStruct lista){
+    Lista *list = (Lista*)lista;
+    No *node = list->primeiro;
+    No *aux;
+        while(node != NULL){
+            aux = node->prox;
+                free(node);
+            node = aux;
+        }
+    free(lista);
+}
+
 Node getFirst(listaStruct lista){
     Lista *list = (Lista*)lista;
     No *node = list->primeiro;
+        if(list->primeiro == NULL){
+            return NULL;
+        }
     return node;
 }
 
 Node getLast(listaStruct lista){
     Lista *list = (Lista*)lista;
     No *node = list->ultimo;
+        if(list->ultimo == NULL){
+            return NULL;
+        }
+        
     return node;
 }
 
@@ -198,80 +257,182 @@ int tamanhoLista(listaStruct lista){
     return tamanho;
 }
 
-void quicksort(listaStruct lista, int tamanho, int inicio){
+void imprimeLista(listaStruct l, char c){
+    Lista *list = (Lista*)l;
+    No *node = list->primeiro;
+        while(node != NULL){
+            if(c == 'b'){
+                printf("%s, %lf, %lf, %s, %s\n", getIdObjetos(getElemento(node)), getXObjetos(getElemento(node)), getYObjetos(getElemento(node)), getCorpObjetos(getElemento(node)), getCorbObjetos(getElemento(node)));
+            }
+            else if(c == 'h'){
+                printf("%s, %lf, %lf, %s, %s\n", getIdObjetos(getElemento(node)), getXObjetos(getElemento(node)), getYObjetos(getElemento(node)), getCorpObjetos(getElemento(node)), getCorbObjetos(getElemento(node)));
+            }
+            else if(c == 'q'){
+                printf("%s, %lf, %lf, %lf, %lf,%s, %s\n", getCepQuadra(getElemento(node)), getXQuadra(getElemento(node)), getYQuadra(getElemento(node)),  getWQuadra(getElemento(node)),  getHQuadra(getElemento(node)), getCorpQuadra(getElemento(node)), getCorbQuadra(getElemento(node)));
+            }
+            else if(c == 's'){
+                printf("%s, %lf, %lf, %s, %s\n", getIdObjetos(getElemento(node)), getXObjetos(getElemento(node)), getYObjetos(getElemento(node)), getCorpObjetos(getElemento(node)), getCorbObjetos(getElemento(node)));
+            }
+            else if(c == 'c'){
+                printf("%d, %lf, %lf, %lf, %s, %s\n", getIdFormas(getElemento(node)), getRFormas(getElemento(node)), getXFormas(getElemento(node)), getYFormas(getElemento(node)), getCorbFormas(getElemento(node)), getCorpFormas(getElemento(node)));
+            }
+            else if(c == 'r'){
+                printf("%d, %lf, %lf, %lf, %lf, %s, %s\n", getIdFormas(getElemento(node)), getWFormas(getElemento(node)), getHFormas(getElemento(node)), getXFormas(getElemento(node)), getYFormas(getElemento(node)), getCorbFormas(getElemento(node)), getCorpFormas(getElemento(node)));
+            }
+            else if(c == 't'){
+                printf("%d, %lf, %lf, %s, %s, %s\n", getIdFormas(getElemento(node)), getXFormas(getElemento(node)), getYFormas(getElemento(node)), getCorbFormas(getElemento(node)), getCorpFormas(getElemento(node)), getTextFormas(getElemento(node)));
+            }
+            else if(c == 'p'){
+                printf("%lf, %lf\n", getXPonto(getElemento(node)),getYPonto(getElemento(node)));
+            }
+            node = node->prox;
+        }
+}
+ 
+double getXLista(Node no){
+    No* node = (No*)no;
+
+    return node->p.x;
+}
+
+double getYLista(Node no){
+    No* node = (No*)no;
+
+    return node->p.y;
+}
+
+void quicksort(listaStruct lista, Node first, Node last){
+    if(last != NULL && getNext(last) != first && first != last){
+        Node pivo = partition(lista, first, last);
+        quicksort(lista, first, getPrevious(pivo));
+        quicksort(lista, getNext(pivo), last);
+    }
+}
+
+Node partition(listaStruct lista, Node first, Node last){
+    Node aux = getPrevious(first);
+
+    for(Node i = first; i != last; i = getNext(i)){
+        if(comparaPontos( (getElemento(getFirst(lista))), getElemento(first), getElemento(last) ) ){
+            if(aux == NULL){
+                aux = first;
+            }
+            else{
+                aux = getNext(aux);
+            }
+        }
+        swapElemento(aux, i);
+    }
+    if(aux == NULL){
+        aux = first;
+    }
+    else{
+        aux = getNext(aux);
+    }
+    swapElemento(aux, last);
+    return aux;
+
+}
+
+/*void quicksort(listaStruct lista, int tamanho, int inicio){
     int i = inicio;
     int j = tamanho - 1;
-    tipo *elementoPivo, *elemento1, *elemento2;
-
     No *aux1, *aux2, *aux3, *pivo;
+    tipo *elemento1, *elemento2;
+    aux3 = (No*)malloc(sizeof(No*));
 
     pivo = getFirst(lista);
+
     for(int k = 0; k < (i + tamanho)/2 ; k++){
-        pivo = getNext(lista);
-    }
-        elementoPivo = getElemento(pivo);
+        pivo = getNext(pivo);
+    } 
+
+    elemento1 = getElemento(pivo);
 
     while(i <= j) { 
         aux1 = getFirst(lista);
         for(int k = 0; k < i; k++){
             aux1 = getNext(aux1);
         }
-        elemento1 = getElemento(aux1);
+            elemento2 = getElemento(aux1);
 
-        while(comparaPontosEnvoltoria((getFirst(lista)), pivo, aux1) > 0 && i < tamanho){
+        while(comparaPontos((getElemento(getFirst(lista))), elemento1, elemento2) > 0 && i < tamanho){
             aux1 = getNext(aux1);
-            elemento1 = getElemento(aux1);
+            elemento2 = getElemento(aux1);
             i++;
         }
 
-        aux1 = getFirst(lista);
-           for (int k = 0; k < j; k++){
+            aux1 = getFirst(lista);
+
+        for (int k = 0; k < j; k++){
             aux1 = getNext(aux1);
         }
-        elemento1 = getInfo(aux1);
+            elemento2 = getElemento(aux1);
 
-        while(compare((getFirst(lista)), pivo, aux1) > 0 && j > inicio){
-                aux1 = getPrevious(aux1);
-                elemento1 = getElemento(aux1);
-
-                j--;
+        while(comparaPontos((getElemento(getFirst(lista))), elemento1, elemento2) > 0 && j > inicio){
+            aux1 = getPrevious(aux1);
+            elemento2 = getElemento(aux1);
+            j--;
         }
         
         if (i <= j){
             aux2 = getFirst(lista);
-            for (int k = 0; k < j; k++){
-                aux2 = getNext(aux2);
-            }
+                for (int k = 0; k < j; k++){
+                    aux2 = getNext(aux2);
+                }
 
-            aux1 = getFirst(lista);
+                    aux1 = getFirst(lista);
 
-            for (int k = 0; k < i; k++){
-                aux1 = getNext(aux1);
-            }
+                for (int k = 0; k < i; k++){
+                    aux1 = getNext(aux1);
+                }
 
-            aux3->elemento = aux1->elemento;
-            aux1->elemento = aux2->elemento;
-            aux2->elemento = aux3->elemento;
-            j--;
-            i++;
+                    aux3->elemento = aux1->elemento;
+                    aux1->elemento = aux2->elemento;
+                    aux2->elemento = aux3->elemento;
+                    j--;
+                    i++;
         }
         
     }
     if (inicio < j){
-        quickSort(lista, inicio, j+1);
-    }if (tamanho > i){
-        quickSort(lista, i, tamanho);
+        quicksort(lista, j + 1 , inicio);
+    }
+    if (tamanho > i){
+        quicksort(lista, tamanho, i);
     }
 
+    free(aux3);
+
+}*/
+
+void swap(listaStruct lista, int pos){
+    No *node1, *node2 , *aux;
+
+    aux = (No*)malloc(sizeof(No*));
+
+    node1 = getFirst(lista);
+
+    for(int i = 0; i < pos; i++){
+        node1 = getNext(node1);
+    }
+
+     node2 = getFirst(lista);
+
+    aux->elemento = node2->elemento;
+    node2->elemento = node1->elemento;
+    node1->elemento = aux->elemento;
+
+    free(aux);
 }
 
-void swap(Node no1, Node no2){
-    No *node1 = (No*)no1;
-    No *node2 = (No*)no2;
-    No *aux;
-
-    aux->elemento = node1->elemento;
-    node1->elemento = node2->elemento;
-    node2->elemento = aux->elemento;
+void swapElemento(Node *node1, Node *node2){
+    No* no1 = (No*)node1;
+    No* no2 = (No*)node2;
+    tipo elemento;
+    
+    elemento = no1->elemento;
+    no1->elemento = no2->elemento;
+    no2->elemento = elemento;
 
 }

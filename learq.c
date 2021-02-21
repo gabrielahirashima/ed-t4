@@ -11,10 +11,12 @@
 #include "criaSvg.h"
 #include "opqry.h"
 #include "opqry2.h"
-#include "tree.h"
-#include "listaEnvoltoria.h"
+#include "listaPontos.h"
+#include "envoltoria.h"
+#include "listaCidadesQT.h"
+#include "listToQuad.h"
 
-void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
+void openGeo(listaCidade listacidade, QuadTree qt, char *nomeGeo, char *saidaSvg){
     char comando[4];
     char cfillQ[20];
     char cstrkQ[20];
@@ -58,13 +60,6 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
         
     tipo elemento;
 
-    listaCidade listaTemp = iniciaListaCidadeTemp();
-    listaCidade listaEnvoltoriaFormas = criaListaEnvoltoria(); 
-    listaCidade listaEnvoltoriaQuadras = criaListaEnvoltoria(); 
-    listaCidade listaEnvoltoriaObjetos = criaListaEnvoltoria(); 
-    listaCidade listaEnvoltoriaPostos = criaListaEnvoltoria(); 
-    listaCidade listaEnvoltoriaRegioes = criaListaEnvoltoria(); 
-
     FILE *arq;
 
     arq = fopen(nomeGeo, "r");
@@ -75,7 +70,7 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
             exit(1);
         }
 
-    while(fscanf(arq, "%s", comando) != EOF){
+            while(fscanf(arq, "%s", comando) != EOF){
                 if(strcmp(comando, "nx") == 0){
                     fscanf(arq, "%d %d %d %d %d\n", &i, &nq, &nh, &ns, &nr);
                 }
@@ -83,62 +78,48 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
                 else if((strcmp(comando, "c") == 0) && cont_i < i){
                     fscanf(arq, "%d %lf %lf %lf %s %s", &id_forma, &r, &x, &y, corb, corp);
                     elemento = criaCirculo(id_forma, r, x, y, corb, corp, cw);
-                    insertElemento(getListaTempFormas(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaFormas), elemento);
+                    insertElemento(getListaFormas(listacidade), elemento);
                     cont_i += 1;
                 }
 
                 else if((strcmp(comando, "r") == 0) && cont_i < i){
                     fscanf(arq, "%d %lf %lf %lf %lf %s %s", &id_forma, &w, &h, &x, &y, corb, corp); 
                     elemento = criaRetangulo(id_forma, w, h, x, y, 0, 0, corb, corp, rw);
-                    insertElemento(getListaFormas(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaFormas), elemento);
+                    insertElemento(getListaFormas(listacidade), elemento);
                     cont_i += 1;
                 }
 
                 else if(strcmp(comando, "t") == 0){
                     fscanf(arq, "%d %lf %lf %s %s %s", &id_forma, &x, &y, corb, corp, text); 
                     elemento = criaTexto(id_forma, x, y, corb, corp, text);
-                    insertElemento(getListaFormas(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaFormas), elemento);
+                    insertElemento(getListaFormas(listacidade), elemento);
                 }
 
                 else if((strcmp(comando, "q") == 0) && cont_nq < nq){
                     fscanf(arq, "%s %lf %lf %lf %lf", cep, &x, &y ,&w ,&h);
                     elemento = criaQuadra(cep, x, y, w, h, cstrkQ, cfillQ, sw);
-                    insertElemento(getListaQuadras(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaQuadras), elemento);
+                    insertElemento(getListaQuadras(listacidade), elemento);
                     cont_nq += 1;
                 }
 
                 else if((strcmp(comando, "h") == 0) && cont_nh < nh){
                     fscanf(arq, "%s %lf %lf", id, &x, &y);
                     elemento = criaHidrante(id, x, y, cfillH, cstrkH, sw);
-                    insertElemento(getListaObjetos(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaObjetos), elemento);
+                    insertElemento(getListaObjetos(listacidade), elemento);
                     cont_nh += 1;
                 }
 
                 else if((strcmp(comando, "s") == 0) && cont_ns < ns){
                     fscanf(arq, "%s %lf %lf", id, &x, &y);
                     elemento = criaSemaforo(id, x, y, cfillS, cstrkS, sw);
-                    insertElemento(getListaObjetos(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaObjetos), elemento);
+                    insertElemento(getListaObjetos(listacidade), elemento);
                     cont_ns += 1;
                 }
 
                 else if((strcmp(comando, "rb") == 0) && cont_nr < nr){
                     fscanf(arq, "%s %lf %lf", id, &x, &y);
                     elemento = criaRadio(id, x, y, cfillR, cstrkR, sw);
-                    insertElemento(getListaObjetos(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaObjetos), elemento);
+                    insertElemento(getListaObjetos(listacidade), elemento);
                     cont_nr += 1;
                 }
 
@@ -146,18 +127,14 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
                     fscanf(arq, "%lf %lf", &x, &y);
                     totalP = totalP + 1;
                     elemento = criaPosto(totalP, x, y);
-                    insertElemento(getListaPostos(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaObjetos), elemento); 
+                    insertElemento(getListaPostos(listacidade), elemento); 
                 }
 
                 else if((strcmp(comando, "d") == 0)){
                     fscanf(arq, "%lf, %lf, %lf, %lf, %lf", &x, &y, &w, &h, &d);
                     totalR = totalR + 1;
                     elemento = criaRegiao(totalR, x, y, w, h, d);
-                    insertElemento(getListaRegioes(listaTemp), elemento);
-                    elemento = criaPontoEnvoltoria(x, y);
-                    insertElemento(getListaTempPontos(listaEnvoltoriaRegioes), elemento); 
+                    insertElemento(getListaRegioes(listacidade), elemento);
                 }
 
                 else if(strcmp(comando, "ch") == 0){
@@ -181,39 +158,19 @@ void openGeo(listaCidade listacidade, char *nomeGeo, char *saidaSvg){
                 }
             }
 
-    calculaEnvoltoria(listaEnvoltoriaFormas, 0);
+    transformaListaFormas(getListaFormas(listacidade), getQuadtreeFormas(qt));
+    //imprimeLista(getListaEnvoltoriaFormas(getListaPontos(listaEnvoltoriaCidade)), 'p');
+    /*printf("%d\n", tamanhoLista(getListaEnvoltoriaQuadras(getListaPontos(listaEnvoltoriaCidade)))); 
 
-    liberaLista(getListaTempEnvoltoria(listaEnvoltoriaFormas));
-    liberaLista(getListaTempPontos(listaEnvoltoriaFormas));
-    free(listaEnvoltoriaFormas);
+    imprimeLista(getListaQuadras(listacidade), 'q');
+    printf("%d\n", tamanhoLista(getListaQuadras(listacidade)));*/
 
-    liberaLista(getListaTempEnvoltoria(listaEnvoltoriaQuadras));
-    liberaLista(getListaTempPontos(listaEnvoltoriaQuadras));
-    free(listaEnvoltoriaQuadras);
+    //envoltoriaConvexa(getListaEnvoltoriaQuadras(getListaPontos(listaEnvoltoriaCidade)), getListaEnvoltoriaQuadras(getEnvoltoriaConvexa(listaEnvoltoriaCidade)));
 
-    liberaLista(getListaTempEnvoltoria(listaEnvoltoriaObjetos));
-    liberaLista(getListaTempPontos(listaEnvoltoriaObjetos));
-    free(listaEnvoltoriaObjetos);
-
-    liberaLista(getListaTempEnvoltoria(listaEnvoltoriaPostos));
-    liberaLista(getListaTempPontos(listaEnvoltoriaPostos));
-    free(listaEnvoltoriaPostos);
-
-    liberaLista(getListaTempEnvoltoria(listaEnvoltoriaRegioes));
-    liberaLista(getListaTempPontos(listaEnvoltoriaRegioes));
-    free(listaEnvoltoriaRegioes);
-
-    liberaLista(getListaFormas(listaTemp));
-    liberaLista(getListaObjetos(listaTemp));
-    liberaLista(getListaQuadras(listaTemp));
-    liberaLista(getListaPostos(listaTemp));
-    liberaLista(getListaRegioes(listaTemp));
-    liberaLista(getListaCasosCovid(listaTemp));
-    liberaLista(getListaEnvoltoria(listaTemp));
-    free(listaTemp);
-    
     fclose(arq);
-    svgen(listacidade, saidaSvg);
+
+    //svgen(listacidade, saidaSvg);
+
 }
 
 void openQry(listaCidade listacidade, char *entradaQry, char *saidaQry){

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lista.h"
-#include "tree.h"
 #include "listaCidades.h"
 #include "listaObjUrbanos.h"
 #include "listaQuadras.h"
@@ -11,154 +10,56 @@
 #include "listaRegioes.h"
 #include "listaCasosCovid.h"
 
-typedef struct cidadetemp{
-    listaStruct listaFormas;
-    listaStruct listaObjUrbanos;
-    listaStruct listaQuadras;
-    listaStruct listaRadios;
-    listaStruct listaPostos;
-    listaStruct listaCasosCovid;
-    listaStruct listaRegioes;
-}CidadeTemp;
-
-typedef struct cidadeenvoltoria{
-    listaStruct listaEnvoltoria;
-    listaStruct listaPontos;
-    listaStruct listaPontosOrganizada;
-}CidadeEnvoltoria;
-
 typedef struct cidade{
-    QuadTreeQT quadTreeFormas;
-    QuadTreeQT quadTreeObjUrbanos;
-    QuadTreeQT quadTreeQuadras;
-    QuadTreeQT quadTreeRadios;
-    QuadTreeQT quadTreePostos;
-    QuadTreeQT quadTreeCasosCovid;
-    QuadTreeQT quadTreeRegioes;
+    listaStruct listaF;
+    listaStruct listaO;
+    listaStruct listaQ;
+    listaStruct listaR;
+    listaStruct listaP;
+    listaStruct listaC;
 }Cidade;
 
-listaCidade iniciaListaCidadeTemp(){
-    CidadeTemp *cid;
-    cid = (CidadeTemp*)malloc(sizeof(CidadeTemp));
-
-    cid->listaFormas = criaQuadTree();
-    cid->listaObjUrbanos = criaQuadTree();
-    cid->listaQuadras = criaQuadTree();
-    cid->listaRadios = criaQuadTree();
-    cid->listaPostos = criaQuadTree();
-    cid->listaCasosCovid = criaQuadTree();
-    cid->listaRegioes = criaQuadTree();
-
-    return cid; 
-}
-
 listaCidade iniciaListaCidade(){
-    Cidade *cid;
-    cid = (Cidade*)malloc(sizeof(Cidade));
+    Cidade *lista;
+    lista = (Cidade*)malloc(sizeof(Cidade));
 
-    cid->quadTreeFormas = criaQuadTree();
-    cid->quadTreeObjUrbanos = criaQuadTree();
-    cid->quadTreeQuadras = criaQuadTree();
-    cid->quadTreeRadios = criaQuadTree();
-    cid->quadTreePostos = criaQuadTree();
-    cid->quadTreeCasosCovid = criaQuadTree();
-    cid->quadTreeRegioes = criaQuadTree();
-
-    return cid; 
+    lista->listaF = criaLista();
+    lista->listaQ = criaLista();
+    lista->listaO = criaLista();
+    lista->listaR = criaLista();
+    lista->listaP = criaLista();
+    lista->listaC = criaLista();
+    return lista; 
 }
 
-listaStruct criaListaEnvoltoria(){
-    CidadeEnvoltoria *cid;
-    cid = (CidadeEnvoltoria*)malloc(sizeof(CidadeEnvoltoria));
-
-    cid->listaEnvoltoria = criaLista();
-    cid->listaPontos = criaLista();
-    cid->listaPontosOrganizada = criaLista();
-}
-
-listaStruct getQuadtreeFormas(listaCidade lista){
+listaStruct getListaFormas(listaCidade lista){
     Cidade* list = (Cidade*)lista;
-    return list->quadTreeFormas;
+    return list->listaF;
 }
 
-listaStruct getQuadtreeObjetos(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreeObjUrbanos;
+listaStruct getListaObjetos(listaCidade lista){
+    Cidade* list = (Cidade*)lista;
+    return list->listaO;
 }
 
-listaStruct getQuadtreePostos(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreePostos;
+listaStruct getListaRegioes(listaCidade lista){
+    Cidade* list = (Cidade*)lista;
+    return list->listaR;
 }
 
-listaStruct getQuadtreeRadios(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreeRadios;
+listaStruct getListaPostos(listaCidade lista){
+    Cidade* list = (Cidade*)lista;
+    return list->listaP;
 }
 
-listaStruct getQuadtreeCasosCovid(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreeCasosCovid;
+listaStruct getListaCasosCovid(listaCidade lista){
+    Cidade* list = (Cidade*)lista;
+    return list->listaC;
 }
 
-listaStruct getQuadtreeQuadras(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreeQuadras;
-}
-
-listaStruct getQuadtreeRegioes(listaCidade qt){
-    Cidade* list = (Cidade*)qt;
-    return list->quadTreeRegioes;
-}
-
-listaStruct getListaTempEnvoltoria(listaCidade lista){
-    CidadeEnvoltoria* list = (CidadeEnvoltoria*)lista;
-    return list->listaEnvoltoria;
-}
-
-listaStruct getListaTempPontos(listaCidade lista){
-    CidadeEnvoltoria* list = (CidadeEnvoltoria*)lista;
-    return list->listaPontos;
-}
-
-listaStruct getListaTempPontosOrganizada(listaCidade lista){
-    CidadeEnvoltoria* list = (CidadeEnvoltoria*)lista;
-    return list->listaPontosOrganizada;
-}
-
-listaStruct getListaTempFormas(listaCidade lista){
-    CidadeTemp* list = (CidadeTemp*)lista;
-    return list->listaFormas;
-}
-
-listaStruct getListaTempObjetos(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaObjUrbanos;
-}
-
-listaStruct getListaTempPostos(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaPostos;
-}
-
-listaStruct getListaTempRadios(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaRadios;
-}
-
-listaStruct getListaTempCasosCovid(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaCasosCovid;
-}
-
-listaStruct getListaTempQuadras(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaQuadras;
-}
-
-listaStruct getListaTempRegioes(listaCidade qt){
-    CidadeTemp* list = (CidadeTemp*)qt;
-    return list->listaRegioes;
+listaStruct getListaQuadras(listaCidade lista){
+    Cidade* list = (Cidade*)lista;
+    return list->listaQ;
 }
 
 Node comparaIdObjetos(listaCidade lista, char *id){
